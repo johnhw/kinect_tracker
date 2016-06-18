@@ -9,3 +9,5 @@ external_contour_min_area = 100
 closing_size = 8
 # draw bubbles around contours
 draw_bubbles=False
+# optionally rotate output image (0 disables)
+rotate_image_deg=-90
