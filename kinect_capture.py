@@ -1,40 +1,15 @@
 import cv2
 import scipy.stats
-from primesense import openni2
 import numpy as np
+import freenect
 
-def open_kinect():
-    """Open a connection to the first Kinect found, and
-    then start capturing depth and color images. Returns handles
-    to the depth and color streams."""
-
-    # initialise openNI
-    openni_path = r"C:\Program Files (x86)\OpenNI2\Redist"
-    #openni_path = r"/Library/OpenNI-MacOSX-x64-2.2/Redist"
-    openni2.initialize(openni_path)     # can also accept the path of the OpenNI redistribution
-
-    #devs = openni2.Device.enumerateDevices()
-    #print devs
-    # open first Kinect
-    dev = openni2.Device.open_any()    
-
-    # connect to the depth and color cameras
-    depth_stream = dev.create_depth_stream()    
-    
-    # start the stream capture
-    depth_stream.start()
-    return depth_stream
-
-def capture_images(depth_stream, size):
+def capture_images(size):
     """Capture images from the color and depth streams, and
     return them as arrays."""
-    
     w,h = size    
-    frame = depth_stream.read_frame()    
-    frame_data = frame.get_buffer_as_uint16()    
-    depth_image = np.frombuffer(frame_data, dtype=np.uint16, count=w*h)    
-    depth_image = depth_image.reshape((h,w))     
-    frame._close()
+    frame_data, ts = freenect.sync_get_depth(format=freenect.DEPTH_MM)
+    # note: image still seems to be rotated 90 degrees after this
+    depth_image = frame_data.reshape((w,h)).T 
     return depth_image    
     
 kernel_small = cv2.getStructuringElement(cv2.MORPH_RECT,(5,5))    
