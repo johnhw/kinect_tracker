@@ -74,8 +74,11 @@ class Topologic(object):
     def draw(self, screen):
         w,h = screen.get_width(), screen.get_height()
         # blit the main buffer
-
-        screen.blit(pygame.transform.rotate(self.draw_surface, -90), ((w-self.w)/2, (h-self.h)/2))
+        if config.rotate_image_deg != 0:
+            drawimg = pygame.transform.rotate(self.draw_surface, config.rotate_image_deg)
+        else:
+            drawimg = self.draw_surface
+        screen.blit(drawimg, ((w-self.w)/2, (h-self.h)/2))
 
     def get_bounding_boxes(self, contours, hierarchy):
         # get bounding boxes
